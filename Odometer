@@ -1,0 +1,73 @@
+// Initialize or retrieve odometer readings from Keychain
+let currentOdometer = Keychain.contains("currentOdometer") ? parseInt(Keychain.get("currentOdometer")) : 0;
+let nextOilChangeMileage = Keychain.contains("nextOilChangeMileage") ? parseInt(Keychain.get("nextOilChangeMileage")) : 5000;
+
+// Function to prompt for the current odometer reading
+async function getOdometerReading() {
+  let alert = new Alert();
+  alert.title = "Odometer Reading";
+  alert.message = "Please enter the current odometer reading of your vehicle:";
+  alert.addTextField("Odometer Reading", currentOdometer.toString());
+  alert.addAction("OK");
+
+  let response = await alert.present();
+  currentOdometer = parseInt(alert.textFieldValue(0));
+  Keychain.set("currentOdometer", currentOdometer.toString());
+  calculateRemainingMiles();
+}
+
+// Function to prompt for the next oil change mileage
+async function setNextOilChangeMileage() {
+  let alert = new Alert();
+  alert.title = "Next Oil Change Mileage";
+  alert.message = "Please enter the mileage at which your next oil change is due:";
+  alert.addTextField("Next Oil Change Mileage", nextOilChangeMileage.toString());
+  alert.addAction("OK");
+
+  let response = await alert.present();
+  nextOilChangeMileage = parseInt(alert.textFieldValue(0));
+  Keychain.set("nextOilChangeMileage", nextOilChangeMileage.toString());
+  calculateRemainingMiles();
+}
+
+// Function to calculate and display remaining miles
+function calculateRemainingMiles() {
+  let remainingMiles = nextOilChangeMileage - currentOdometer;
+  let message = remainingMiles > 0
+    ? `You have ${remainingMiles} miles left before your next oil change.`
+    : `Your oil change is overdue by ${Math.abs(remainingMiles)} miles.`;
+
+  let alert = new Alert();
+  alert.title = "Oil Change Status";
+  alert.message = message;
+  alert.addAction("OK");
+  alert.present();
+}
+
+// Function to display remaining miles without updating values
+function displayRemainingMiles() {
+  calculateRemainingMiles();
+}
+
+// Main function to prompt user for input and calculate remaining miles
+async function main() {
+  let alert = new Alert();
+  alert.title = "Choose Action";
+  alert.message = "What would you like to do?";
+  alert.addAction("Enter Odometer Reading");
+  alert.addAction("Set Next Oil Change Mileage");
+  alert.addAction("Display Remaining Miles");
+  alert.addCancelAction("Cancel");
+
+  let response = await alert.present();
+  if (response == 0) {
+    await getOdometerReading();
+  } else if (response == 1) {
+    await setNextOilChangeMileage();
+  } else if (response == 2) {
+    displayRemainingMiles();
+  }
+}
+
+// Run the main function
+main();
