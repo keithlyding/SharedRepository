@@ -1,0 +1,9 @@
+This script will present a menu with three options when you run it:
+
+Enter Odometer Reading: Prompts you to input your current odometer reading and calculates the remaining miles until your next oil change.
+Set Next Oil Change Mileage: Allows you to input the mileage at which your next oil change is due.
+Display Remaining Miles: calculates and displays the remaining miles without prompting for any new input.
+
+
+You can add this script to your iPhone Shortcuts app.
+I use the shortcuts app to have it run whenever my phone connects to my car's bluetooth
